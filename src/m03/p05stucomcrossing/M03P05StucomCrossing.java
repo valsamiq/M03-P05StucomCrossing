@@ -1,10 +1,14 @@
 package m03.p05stucomcrossing;
 
 import dao.StuCrossDAO;
+import exceptions.MyException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import model.User;
+import model.Character;
 
 /**
  * @author balsamiq
@@ -13,16 +17,43 @@ public class M03P05StucomCrossing {
 
     public static void main(String[] args) {
         StuCrossDAO stuCrossDAO = new StuCrossDAO();
-        
-        System.out.println("Trying connection with the db");
-        try {
+        title();
+        //Something to declare?
+        //Users:
+        User u1 = new User("ViejoVerde", "88SS", 0, 0, "Perdido", 0);
+        //Characters:
+        Character c1 = new Character("Fury", "Things","Everywhere","Dont know");
+        try{
             stuCrossDAO.connect();
-            System.out.println("Connection Estabished");
-        } catch (SQLException ex) {
-            System.out.println("Error al conectar / desconectar: " + ex.getMessage());
+            //------------------------------------------------------------------
+            //Insert new User
+            System.out.println("|________________________________________|");
+            System.out.println(" ________________________________________ ");
+            System.out.println("|  Registering user :                    |");
+            System.out.println("|  --> " + u1.getUsername()+ "." );
+            newUser(stuCrossDAO, u1);
+            //------------------------------------------------------------------
+            //Serch User by Name
+            System.out.println("|________________________________________|");
+            System.out.println(" ________________________________________");
+            System.out.println("|  Search user by Name:                  |");
+            System.out.println("|  --> ViejoVerde                        |");
+            searchName(stuCrossDAO, "ViejoVerde");
+            //------------------------------------------------------------------
+            //Insert new Character
+            System.out.println("|________________________________________|");
+            System.out.println(" ________________________________________ ");
+            System.out.println("|  Registering character :               |");
+            System.out.println("|  --> " + c1.getName()+ "." );
+            newCharacter(stuCrossDAO, u1);
         }
+        catch(SQLException ex){
+            System.out.println("| Error while connecting/disconnecting:  |");
+            System.out.println("| "+ex.getMessage());
+        }
+        exit();
     }
-    
+
     private static boolean mainMenu(String op){
         boolean bnd = true;
         return bnd;
@@ -30,42 +61,33 @@ public class M03P05StucomCrossing {
 
     //Backgroud Resources
     //-------------------------------------------------------------------------- 
-    private static String pedStr(String mensaje) {
-        BufferedReader teclado = new BufferedReader(new InputStreamReader(System.in));
-        String text = "";
-        boolean bnd = true;
-        do {
-            System.out.print(mensaje);
-            try {
-                text = teclado.readLine();
-                if (text.equals("")) {
-                    System.out.println("| [!]         Valor en Blanco        [!] |");
-                } else {
-                    bnd = false;
-                }
-            } catch (IOException ex) {
-                System.out.println("| [!]    Error de entrada y salida   [!] |");
-            }
-        } while (bnd);
-        return text;
+    public static void searchName(StuCrossDAO stuCrossDAO, String name) throws SQLException{
+        try{
+            User aux = stuCrossDAO.getUserByUsername(name);
+            System.out.println("|  User Details:                         |");
+            System.out.println("|  " + aux);
+        }
+        catch(MyException ex){
+            System.out.println(ex.getMessage());
+        }
     }
-
-    private static int pedInt(String mensaje) {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int op = 0;
-        boolean bnd = true;
-        do {
-            try {
-                System.out.print(mensaje);
-                op = Integer.parseInt(br.readLine());
-                bnd = false;
-            } catch (IOException ex) {
-                System.out.println("| [!]    Error de entrada y salida   [!] |");
-            } catch (NumberFormatException ex) { //error de format solicitat
-                System.out.println("| [!]     Numero ENTERO requerido    [!] |");
-            }
-        } while (bnd == true);
-        return op;
+    private static void newCharacter(StuCrossDAO stuCrossDAO, Character c1) throws SQLException{
+        try{
+            stuCrossDAO.insertCharacter(c1);
+            System.out.println("|  Character successfully added.         |");
+        }
+        catch(MyException ex){
+            System.out.println("| "+ex.getMessage());
+        }
+    }
+    private static void newUser(StuCrossDAO stuCrossDAO, User u1) throws SQLException{
+        try{
+            stuCrossDAO.insertUser(u1);
+            System.out.println("|  User successfully added.              |");
+        }
+        catch (MyException ex){
+            System.out.println("| "+ex.getMessage());
+        }
     }
 
     //Graphic Resources
