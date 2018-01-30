@@ -2,31 +2,32 @@ package m03.p05stucomcrossing;
 
 import dao.StuCrossDAO;
 import exceptions.MyException;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import model.User;
 import model.Character;
+import model.Item;
 
 /**
  * @author balsamiq
  */
 public class M03P05StucomCrossing {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws MyException {
         StuCrossDAO stuCrossDAO = new StuCrossDAO();
         title();
-        //Something to declare?
+        
+        //Something to declare? do it here:
         //Users:
-        User u1 = new User("ViejoVerde", "88SS", 0, 0, "Perdido", 0);
+        User u1 = new User("ViejoVerde","88SS",0,0,"Perdido",0);
         //Characters:
-        Character c1 = new Character("Fury", "Things","Everywhere","Dont know");
+        Character c1 = new Character("Fury","Things","Everywhere","Dont know");
+        //Items:
+        Item i1 = new Item("Palo",59.0,89.9,"Objeto Contundente","Modernista");
+        
         try{
             stuCrossDAO.connect();
             //------------------------------------------------------------------
-            //Insert new User
+            //Insert new User 
             System.out.println("|________________________________________|");
             System.out.println(" ________________________________________ ");
             System.out.println("|  Registering user :                    |");
@@ -45,7 +46,37 @@ public class M03P05StucomCrossing {
             System.out.println(" ________________________________________ ");
             System.out.println("|  Registering character :               |");
             System.out.println("|  --> " + c1.getName()+ "." );
-            newCharacter(stuCrossDAO, u1);
+            newCharacter(stuCrossDAO, c1);
+            //Insert new Item
+            System.out.println("|________________________________________|");
+            System.out.println(" ________________________________________ ");
+            System.out.println("|  Registering item :                    |");
+            System.out.println("|  --> " + i1.getName()+ "." );
+            newItem(stuCrossDAO, i1);
+            System.out.println("|________________________________________|");
+            System.out.println(" ________________________________________ ");
+            System.out.println("|  User Login :                          |");
+            System.out.println("|  User:                                 |");
+            String usu="ViejoRojo";
+            System.out.println("|  --> " + usu + "                         |");
+            System.out.println("|  Password:                             |");
+            String pass="88SS";
+            System.out.println("|  --> " + pass + "                              |");
+            System.out.println("|                                        |");
+            System.out.println("|  Login in...                           |");
+            loginFunction(stuCrossDAO, usu, pass);
+            System.out.println("|________________________________________|");
+            System.out.println(" ________________________________________ ");
+            System.out.println("|  User Login :                          |");
+            System.out.println("|  User:                                 |");
+            usu="ViejoVerde";
+            System.out.println("|  --> " + usu + "                        |");
+            System.out.println("|  Password:                             |");
+            pass="88SS";
+            System.out.println("|  --> " + pass + "                              |");
+            System.out.println("|                                        |");
+            System.out.println("|  Login in...                           |");
+            loginFunction(stuCrossDAO, usu, pass);
         }
         catch(SQLException ex){
             System.out.println("| Error while connecting/disconnecting:  |");
@@ -53,14 +84,17 @@ public class M03P05StucomCrossing {
         }
         exit();
     }
-
-    private static boolean mainMenu(String op){
-        boolean bnd = true;
-        return bnd;
-    }
-
     //Backgroud Resources
-    //-------------------------------------------------------------------------- 
+    //--------------------------------------------------------------------------
+    public static void loginFunction(StuCrossDAO stuCrossDAO, String usu, String pass) throws SQLException, MyException{
+            boolean checkLogin = stuCrossDAO.Login(usu, pass);
+            if(checkLogin){
+                System.out.println("|    [!]     Login Successfull!    [!]   |");
+            }
+            else{
+                System.out.println("|  [!] Error: Wrong User or Password [!] |");
+            }
+    }
     public static void searchName(StuCrossDAO stuCrossDAO, String name) throws SQLException{
         try{
             User aux = stuCrossDAO.getUserByUsername(name);
@@ -69,6 +103,15 @@ public class M03P05StucomCrossing {
         }
         catch(MyException ex){
             System.out.println(ex.getMessage());
+        }
+    }
+    private static void newItem(StuCrossDAO stuCrossDAO, Item i1) throws SQLException{
+        try{
+            stuCrossDAO.insertItem(i1);
+            System.out.println("|  Item successfully added.              |");
+        }                    
+        catch(MyException ex){
+            System.out.println("| "+ex.getMessage());
         }
     }
     private static void newCharacter(StuCrossDAO stuCrossDAO, Character c1) throws SQLException{
@@ -92,61 +135,6 @@ public class M03P05StucomCrossing {
 
     //Graphic Resources
     //--------------------------------------------------------------------------
-    public static void listOp() {
-        System.out.println("|________________________________________|");
-        System.out.println("|              Lists Types:              |");
-        System.out.println("|   1 - Get a User Friends List          |");
-        System.out.println("|   2 - Get Missing Items from a User    |");
-        System.out.println("|   3 - Top 10 Users                     |");
-        System.out.println("|   4 - Top Friendships from Users       |");
-        System.out.println("|   5 - Get Unknown User from other Users|");
-        System.out.println("|   0 - Back                             |");
-    }
-
-    public static void itemOp() {
-        System.out.println("|________________________________________|");
-        System.out.println("|              Item Options:             |");
-        System.out.println("|   1 - Buy an Item                      |");
-        System.out.println("|   2 - Sell an Item                     |");
-        System.out.println("|   3 - Give an Item to a User           |");
-        System.out.println("|   4 - Check User Registration          |");
-        System.out.println("|   5 - User's Inventory List            |");
-        System.out.println("|   0 - Back                             |");
-    }
-
-    public static void modifyOp() {
-        System.out.println("|________________________________________|");
-        System.out.println("|            Modify Options:             |");
-        System.out.println("|   1 - Modify User's Profile            |");
-        System.out.println("|   2 - Modify User's Location           |");
-        System.out.println("|   3 - Modify Character's Location      |");
-        System.out.println("|   4 - Modify Item's Price              |");
-        System.out.println("|   0 - Back                             |");
-    }
-
-    public static void registerOp() {
-        System.out.println("|________________________________________|");
-        System.out.println("|            Registry Options:           |");
-        System.out.println("|   1 - Register new User                |");
-        System.out.println("|   2 - Register new Character           |");
-        System.out.println("|   3 - Register new Item                |");
-        System.out.println("|   4 - Check User Registration          |");
-        System.out.println("|   0 - Back                             |");
-    }
-
-    public static void mainOptions() {
-        System.out.println("|________________________________________|");
-        System.out.println(" ________________________________________ ");
-        System.out.println("|                                        |");
-        System.out.println("|           Choose an option:            |");
-        System.out.println("|                                        |");
-        System.out.println("|   1 - Register Options  -->            |");
-        System.out.println("|   2 - Modify Options  -->              |");
-        System.out.println("|   3 - Users on specific location       |");
-        System.out.println("|   4 - Item Options  -->                |");
-        System.out.println("|   5 - Lists  -->                       |");
-        System.out.println("|   0 - Exit                             |");
-    }
 
     private static void title() {
         System.out.println(" ________________________________________ ");

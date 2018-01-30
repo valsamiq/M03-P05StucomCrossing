@@ -78,7 +78,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" + "username=" + username + ", password=" + password + ", stucoins=" + stucoins + ", level=" + level + ", place=" + place + ", points=" + points + '}';
+        return "User{" + "\n|    username=" + username + "\n|    password=" + password + "\n|    stucoins=" + stucoins + "\n|    level=" + level + "\n|    place=" + place + "\n|    points=" + points + '}';
     }
 }
 //   (\_(\
