@@ -77,6 +77,18 @@ public class M03P05StucomCrossing {
             System.out.println("|                                        |");
             System.out.println("|  Login in...                           |");
             loginFunction(stuCrossDAO, usu, pass);
+            System.out.println(" ________________________________________ ");
+            System.out.println("|  Modify Username :                     |");
+            System.out.println("|  User:                                 |");
+            usu = "ViejoVerde";
+            System.out.println("|  --> " + usu + "                        |");
+            System.out.println("|  New Username:                         |");
+            String newUsername = "ViejoFlojo";
+            u1.setUsername(newUsername);
+            modifyProfile(stuCrossDAO, u1, usu);
+            System.out.println("|  --> " + newUsername + "                        |");
+            System.out.println("|                                        |");
+            
         }
         catch(SQLException ex){
             System.out.println("| Error while connecting/disconnecting:  |");
@@ -86,6 +98,14 @@ public class M03P05StucomCrossing {
     }
     //Backgroud Resources
     //--------------------------------------------------------------------------
+    public static void modifyProfile(StuCrossDAO stuCrossDAO, User user, String usu) throws SQLException{
+        try {
+            stuCrossDAO.modifyUserProfile(user, usu);
+        }
+        catch(MyException ex){
+            System.out.println(ex.getMessage());
+        }
+    }
     public static void loginFunction(StuCrossDAO stuCrossDAO, String usu, String pass) throws SQLException, MyException{
             boolean checkLogin = stuCrossDAO.Login(usu, pass);
             if(checkLogin){

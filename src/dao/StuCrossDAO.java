@@ -65,6 +65,18 @@ public class StuCrossDAO {
     }
     //Aux. functions
     //--------------------------------------------------------------------------
+    public void modifyUserProfile(User user, String usu) throws SQLException, MyException{
+//        if(!userExists(user)){
+//            throw new MyException("| [!] Error: No User registred [!]|");
+//        }
+        String upd = "update user set username=? where username=?";
+        PreparedStatement ps = connection.prepareStatement(upd);
+        ps.setString(1, user.getUsername());
+        ps.setString(2, usu);
+        ps.executeUpdate();
+        ps.close();
+        System.out.println("");
+    }
     public boolean Login (String usu, String pass)throws SQLException, MyException{
         boolean bnd=true;
         Statement st = connection.createStatement();
