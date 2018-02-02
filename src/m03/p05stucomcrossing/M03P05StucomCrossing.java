@@ -24,11 +24,10 @@ public class M03P05StucomCrossing {
         User u3 = new User("Albert","pass",0,0,"Clase",0);
         User u4 = new User("Torquemada","pass",0,0,"Biblioteca",0);
         User u5 = new User("JoanaDeArco","pass",0,0,"Biblioteca",0);
-        
         //Characters:
         Character c1 = new Character("Fury","Things","Everywhere","Dont know");
-        Character c2 = new Character("Robertus", "DAM", "P2", "Palo");
-        Character c3 = new Character("Brutus", "DAM", "P2", "Piedra");
+        Character c2 = new Character("Robertus", "DAW", "P2", "Palo");
+        Character c3 = new Character("Brutus", "DAW", "P2", "Piedra");
         Character c4 = new Character("Chirigotus", "DAM", "P2", "AceleradorParticulas");
         Character c5 = new Character("Bilis", "DAM", "P2", "Piedra");
         //Items:
@@ -118,7 +117,6 @@ public class M03P05StucomCrossing {
             System.out.println("|  Login in...                           |");
             loginFunction(stuCrossDAO, usu, pass);
             System.out.println("|________________________________________|");
-            
             //------------------------------------------------------------------
             //Modify User's Profile
             waitForIt();
@@ -133,7 +131,6 @@ public class M03P05StucomCrossing {
             modifyProfile(stuCrossDAO, u1, usu);
             System.out.println("|  --> " + newUsername + "                        |");
             System.out.println("|________________________________________|");
-            
             //------------------------------------------------------------------
             //Modify User's Location
             waitForIt();
@@ -201,15 +198,25 @@ public class M03P05StucomCrossing {
             System.out.println(" ________________________________________ ");
             System.out.println("|  Users on the same Place :             |");
             usu = "ViejoFlojo";
-            System.out.println("|  Location to search:                   |");
+            System.out.println("|  UserLoc to search:                    |");
             System.out.println("|  --> "+usu);
             searchCharByUser(stuCrossDAO,usu);
             System.out.println("|________________________________________|");
             //------------------------------------------------------------------
-            //Buy item to User
-            
+            //Buy item from User
+            waitForIt();
+            System.out.println(" ________________________________________ ");
+            System.out.println("|  Buy Item to User :                    |");
+            usu = "ViejoFlojo";
+            System.out.println("|  User:                                 |");
+            System.out.println("|  --> "+usu);
+            itm = "Palo";
+            System.out.println("|  Item:                                 |");
+            System.out.println("|  --> "+itm);
+            sellItemFromUser(stuCrossDAO,usu,itm);
+            System.out.println("|________________________________________|");
             //------------------------------------------------------------------
-            //Sell itemo to User
+            //Sell item to User
             
             //------------------------------------------------------------------
             //Give Item from User to Character
@@ -219,6 +226,20 @@ public class M03P05StucomCrossing {
             
             //------------------------------------------------------------------
             //Check User's Friendships
+            
+            //------------------------------------------------------------------
+            //Check User's Inventory
+            waitForIt();
+            System.out.println(" ________________________________________ ");
+            System.out.println("|  Inventory Owner :                     |");
+            usu = "Carles";
+            System.out.println("|  User:                                 |");
+            System.out.println("|  --> "+usu);
+            itm = "Palo";
+            System.out.println("|  Item:                                 |");
+            System.out.println("|  --> "+itm);
+            sellItemFromUser(stuCrossDAO,usu,itm);
+            System.out.println("|________________________________________|");
         }
         catch(SQLException ex){
             System.out.println("| Error while connecting/disconnecting:  |");
@@ -228,6 +249,16 @@ public class M03P05StucomCrossing {
     }
     //Backgroud Resources
     //--------------------------------------------------------------------------
+    public static void sellItemFromUser(StuCrossDAO stuCrossDAO, String usu,String itm) throws SQLException, MyException{
+//        stuCrossDAO.sellItemFromUsers(usu,itm);
+        try{
+        Item i = stuCrossDAO.getItemPrice(itm);
+        }
+        catch(MyException ex){
+            System.out.println(ex.getMessage());
+            
+        }
+    }
     public static void modifyItemPrice(StuCrossDAO stuCrossDAO,String itm, double value) throws SQLException{
         stuCrossDAO.modifyItemPriceValue(itm,value);
     }

@@ -9,8 +9,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import javax.crypto.spec.IvParameterSpec;
 import model.User;
 import model.Character;
+import model.Inventory;
 import model.Item;
 
 /**
@@ -68,6 +70,11 @@ public class StuCrossDAO {
     }
 
     //Aux. functions 
+//    public void sellItemFromUsers(String itm) throws SQLException{
+//        Inventory aux = new Inventory(itm);
+//        
+//        if (itemExists(aux))
+//    }
     public void modifyItemPriceValue(String itm, double value) throws SQLException {
         Item aux = new Item(itm);
         if (itemExists(aux) == true) {
@@ -145,7 +152,7 @@ public class StuCrossDAO {
         if(!userExists(aux)) {
             throw new MyException("| [!]  Error: User Not Found on DB   [!] |");
         }
-        String select = "select * from stucomcrossing.character where place ='" + aux.getPlace()+ "'";
+        String select = "select * from stucomcrossing.character where place='" + aux.getPlace()+ "'";
         Statement st = connection.createStatement();
         ResultSet rs = st.executeQuery(select);
         while (rs.next()){
@@ -159,6 +166,23 @@ public class StuCrossDAO {
         rs.close();
         st.close();
         return Characters;
+    }
+    //Get Item Price:
+    public Item getItemPrice(String itm) throws SQLException, MyException{
+        Item aux = new Item(itm);
+        if (!itemExists(aux)) {
+            throw new MyException("| [!]  Error: Item Not Found on DB   [!] |");
+        }
+        Statement st = connection.createStatement();
+        ResultSet rs = st.executeQuery("select * from stucomcrossing.item where name='" + itm + "'");
+        Item i = new Item();
+            if(rs.next()){
+                i.setName(rs.getString("name"));
+                i.setPrice(rs.getDouble("price"));
+                i.setSalePrice(rs.getDouble("saleprice"));
+            }
+        return i;
+                
     }
     //Get Char:
     public Character getCharacterByName(String name) throws SQLException, MyException {
