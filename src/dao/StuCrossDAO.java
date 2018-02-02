@@ -102,6 +102,16 @@ public class StuCrossDAO {
         Statement st = connection.createStatement();
         ResultSet rs = st.executeQuery("select * from user where username='"+ name +"'");
         User u = new User();
+        if(rs.next()){
+            u.setUsername(rs.getString("username"));
+            u.setPassword(rs.getString("password"));
+            u.setStucoins(rs.getInt("stucoins"));
+            u.setLevel(rs.getInt("level"));
+            u.setPlace(rs.getString("place"));
+            u.setPoints(rs.getInt("points"));
+        }
+        st.close();
+        rs.close();
         return u;
     }
     //Check if a value already exists.
