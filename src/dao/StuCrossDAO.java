@@ -7,21 +7,25 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import model.User;
 import model.Character;
 import model.Item;
+
 /**
  * @author balsamiq
  */
 public class StuCrossDAO {
+
     private Connection connection;
+
     //Insertions
     //--------------------------------------------------------------------------
-    public void insertItem(Item i) throws SQLException, MyException{
-        if(itemExists(i)){
+    public void insertItem(Item i) throws SQLException, MyException {
+        if (itemExists(i)) {
             throw new MyException("[!] Error: This item already exist [!] |");
-        }
-        else{
+        } else {
             PreparedStatement ps = connection.prepareStatement("insert into item values(?, ?, ?, ?, ?)");
             ps.setString(1, i.getName());
             ps.setDouble(2, i.getPrice());
@@ -32,11 +36,11 @@ public class StuCrossDAO {
             ps.close();
         }
     }
-    public void insertCharacter(Character c) throws SQLException, MyException{
-        if(characterExists(c)){
+
+    public void insertCharacter(Character c) throws SQLException, MyException {
+        if (characterExists(c)) {
             throw new MyException("[!] Error: This user already exist [!] |");
-        }
-        else{
+        } else {
             PreparedStatement ps = connection.prepareStatement("insert into stucomcrossing.character values(?, ?, ?, ?)");
             ps.setString(1, c.getName());
             ps.setString(2, c.getStudy());
@@ -46,12 +50,11 @@ public class StuCrossDAO {
             ps.close();
         }
     }
-    
-    public void insertUser(User u) throws SQLException, MyException{
-        if(userExists(u)){
+
+    public void insertUser(User u) throws SQLException, MyException {
+        if (userExists(u)) {
             throw new MyException("[!]Error: This Char. already exists[!] |");
-        }
-        else{
+        } else {
             PreparedStatement ps = connection.prepareStatement("insert into user values(?, ?, ?, ?, ?, ?)");
             ps.setString(1, u.getUsername());
             ps.setString(2, u.getPassword());
@@ -63,9 +66,49 @@ public class StuCrossDAO {
             ps.close();
         }
     }
-    //Aux. functions
-    //--------------------------------------------------------------------------
-    public void modifyUserProfile(User user, String usu) throws SQLException, MyException{
+
+    //Aux. functions 
+    public void modifyItemPriceValue(String itm, double value) throws SQLException {
+        Item aux = new Item(itm);
+        if (itemExists(aux) == true) {
+            String update = "update stucomcrossing.item set price=? where name=?";
+            PreparedStatement ps = connection.prepareStatement(update);
+            ps.setDouble(1, value);
+            ps.setString(2, itm);
+            ps.executeUpdate();
+            ps.close();
+        }
+    }
+
+    public void modifyLicationCharacter(String usu, String newLocation) throws SQLException {
+        Character aux = new Character(usu);
+        if (characterExists(aux) == true) {
+            String update = "update stucomcrossing.character set place=? where name=?";
+            PreparedStatement ps = connection.prepareStatement(update);
+            ps.setString(1, newLocation);
+            ps.setString(2, usu);
+            ps.executeUpdate();
+            ps.close();
+        } else {
+            System.out.println("| [!]  Error: Char Not Found on DB   [!] |");
+        }
+    }
+
+    public void modifyLocationUser(String usu, String newLocation) throws SQLException {
+        User aux = new User(usu);
+        if (userExists(aux) == true) {
+            String update = "update stucomcrossing.user set place=? where username=?";
+            PreparedStatement ps = connection.prepareStatement(update);
+            ps.setString(1, newLocation);
+            ps.setString(2, usu);
+            ps.executeUpdate();
+            ps.close();
+        } else {
+            System.out.println("| [!]  Error: User Not Found on DB   [!] |");
+        }
+    }
+
+    public void modifyUserProfile(User user, String usu) throws SQLException, MyException {
 //        if(!userExists(user)){
 //            throw new MyException("| [!] Error: No User registred [!]|");
 //        }
@@ -77,32 +120,77 @@ public class StuCrossDAO {
         ps.close();
         System.out.println("");
     }
-    public boolean Login (String usu, String pass)throws SQLException, MyException{
-        boolean bnd=true;
+
+    public boolean Login(String usu, String pass) throws SQLException, MyException {
+        boolean bnd = true;
         Statement st = connection.createStatement();
-        ResultSet rsUser = st.executeQuery("select * from user where username='" +usu+ "'");
-        if(!rsUser.next()){
+        ResultSet rsUser = st.executeQuery("select * from user where username='" + usu + "'");
+        if (!rsUser.next()) {
             bnd = false;
         }
-        ResultSet rsPass = st.executeQuery("select * from user where password='" +pass+ "'");
-        if(!rsPass.next()){
-            bnd=false;
+        ResultSet rsPass = st.executeQuery("select * from user where password='" + pass + "'");
+        if (!rsPass.next()) {
+            bnd = false;
         }
         rsUser.close();
         rsPass.close();
         st.close();
         return bnd;
     }
-    //Get user:
-    public User getUserByUsername(String name)throws SQLException, MyException{
+    //Get Char by User Location:
+
+    public List<Character> CharactergetCharByUserLocation(String usu) throws SQLException, MyException{
+        List<Character> Characters = new ArrayList<>();
+        User aux = getUserByUsername(usu);
+        if(!userExists(aux)) {
+            throw new MyException("| [!]  Error: User Not Found on DB   [!] |");
+        }
+        String select = "select * from stucomcrossing.character where place ='" + aux.getPlace()+ "'";
+        Statement st = connection.createStatement();
+        ResultSet rs = st.executeQuery(select);
+        while (rs.next()){
+            Character charList = new Character();
+            charList.setName(rs.getString("name"));
+            charList.setStudy(rs.getString("study"));
+            charList.setPlace(rs.getString("place"));
+            charList.setPreference(rs.getString("preference"));
+            Characters.add(charList);
+        }
+        rs.close();
+        st.close();
+        return Characters;
+    }
+    //Get Char:
+    public Character getCharacterByName(String name) throws SQLException, MyException {
+        Character aux = new Character(name);
+        if (!characterExists(aux)) {
+            throw new MyException("| [!]  Error: Char Not Found on DB   [!] |");
+        }
+        Statement st = connection.createStatement();
+        ResultSet rs = st.executeQuery("select * from stucomcrossing.character where name='" + name + "'");
+        Character c = new Character();
+
+        if (rs.next()) {
+            c.setName(rs.getString("name"));
+            c.setStudy(rs.getString("study"));
+            c.setPlace(rs.getString("place"));
+            c.setPreference(rs.getString("preference"));
+        }
+        st.close();
+        rs.close();
+        return c;
+    }
+
+    //Get User:
+    public User getUserByUsername(String name) throws SQLException, MyException {
         User aux = new User(name);
-        if(!userExists(aux)){
+        if (!userExists(aux)) {
             throw new MyException("| [!]  Error: User Not Found on DB   [!] |");
         }
         Statement st = connection.createStatement();
-        ResultSet rs = st.executeQuery("select * from user where username='"+ name +"'");
+        ResultSet rs = st.executeQuery("select * from stucomcrossing.user where username='" + name + "'");
         User u = new User();
-        if(rs.next()){
+        if (rs.next()) {
             u.setUsername(rs.getString("username"));
             u.setPassword(rs.getString("password"));
             u.setStucoins(rs.getInt("stucoins"));
@@ -114,40 +202,44 @@ public class StuCrossDAO {
         rs.close();
         return u;
     }
+
     //Check if a value already exists.
-    private boolean itemExists(Item i) throws SQLException{
+    private boolean itemExists(Item i) throws SQLException {
         Statement st = connection.createStatement();
         boolean bnd = false;
-        ResultSet rs = st.executeQuery("select * from item where name='" + i.getName()+ "'");
-        if(rs.next()){
+        ResultSet rs = st.executeQuery("select * from item where name='" + i.getName() + "'");
+        if (rs.next()) {
             bnd = true;
         }
         rs.close();
         st.close();
         return bnd;
     }
-    private boolean characterExists(Character c) throws SQLException{
+
+    private boolean characterExists(Character c) throws SQLException {
         Statement st = connection.createStatement();
         boolean bnd = false;
-        ResultSet rs = st.executeQuery("select * from stucomcrossing.character where name='" + c.getName()+ "'");
-        if(rs.next()){
+        ResultSet rs = st.executeQuery("select * from stucomcrossing.character where name='" + c.getName() + "'");
+        if (rs.next()) {
             bnd = true;
         }
         rs.close();
         st.close();
         return bnd;
     }
-    private boolean userExists(User u ) throws SQLException{
+
+    private boolean userExists(User u) throws SQLException {
         Statement st = connection.createStatement();
         boolean bnd = false;
-        ResultSet rs = st.executeQuery("select * from user where username='" + u.getUsername()+ "'");
-        if(rs.next()){
+        ResultSet rs = st.executeQuery("select * from user where username='" + u.getUsername() + "'");
+        if (rs.next()) {
             bnd = true;
         }
         rs.close();
         st.close();
         return bnd;
     }
+
     //DB Open/Close Conn.
     //--------------------------------------------------------------------------
     // DB-Connection:
@@ -157,6 +249,7 @@ public class StuCrossDAO {
         String pass = "";
         connection = DriverManager.getConnection(url, user, pass);
     }
+
     // DB-Disconnection:
     public void disconnect() throws SQLException {
         if (connection != null) {
