@@ -9,11 +9,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import javax.crypto.spec.IvParameterSpec;
 import model.User;
 import model.Character;
 import model.Inventory;
 import model.Item;
+import model.Contact;
 
 /**
  * @author balsamiq
@@ -68,13 +68,93 @@ public class StuCrossDAO {
             ps.close();
         }
     }
+    //Aux. functions
 
-    //Aux. functions 
-//    public void sellItemFromUsers(String itm) throws SQLException{
-//        Inventory aux = new Inventory(itm);
-//        
-//        if (itemExists(aux))
-//    }
+    //Give an Item to User (Only works if it can find those Items to its user.)
+    public void payAndGetPaid(boolean type, String usu, double price) throws SQLException, MyException {
+        String select = "select * from stucomcrossing.user where username='" + usu + "'";
+        Statement st = connection.createStatement();
+        ResultSet rs = st.executeQuery(select);
+        User u = new User();
+        if (rs.next()) {
+            u.setStucoins(rs.getInt("stucoins"));
+        }
+        String update = "update stucomcrossing.user set stucoins=? where username=?";
+        PreparedStatement ps = connection.prepareStatement(update);
+        if (type) {
+            //True = Sell, so, the User may be get Paid.
+            ps.setInt(1, (int)(u.getStucoins()+price));
+        } else if (!type) {
+            //False = Buy, then let's take some money from this fool.
+            ps.setInt(1, (int)(u.getStucoins()-price));
+        } else {
+            System.out.println("|     WTF are you doing here, man?       |");
+        }
+        ps.setString(2, usu);
+        ps.executeUpdate();
+        rs.close();
+        st.close();
+        ps.close();
+    }
+
+    public boolean giveItemToUsers(String usu, String itm) throws SQLException, MyException {
+        boolean bnd = false;
+        Inventory Invent = new Inventory();
+        User aux = getUserByUsername(usu);
+        if (!userExists(aux)) {
+            System.out.println("| [!]  Error: User Not Found on DB   [!] |");
+        }
+        String select = "select * from stucomcrossing.inventory where user='" + usu + "' and item='" + usu + "'";
+        Statement st = connection.createStatement();
+        ResultSet rs = st.executeQuery(select);
+        Inventory i = new Inventory();
+        if (rs.next()) {
+            i.setItem(getItemByName("item"));
+            i.setUser(getUserByUsername("user"));
+            i.setQuantity(rs.getInt("quantity"));
+        }
+        String update = "update stucomcrossing.inventory set quantity=? where user=? and item=?";
+        PreparedStatement ps = connection.prepareStatement(update);
+        ps.setInt(1, (i.getQuantity() + 1));
+        ps.setString(2, usu);
+        ps.setString(3, itm);
+        ps.executeUpdate();
+        rs.close();
+        st.close();
+        ps.close();
+        return bnd;
+    }
+
+    //Take an Item from User
+    public boolean takeItemFromUsers(String usu, String itm) throws SQLException, MyException {
+        boolean bnd = false;
+        Inventory Invent = new Inventory();
+        User aux = getUserByUsername(usu);
+        if (!userExists(aux)) {
+            System.out.println("| [!]  Error: User Not Found on DB   [!] |");
+        }
+        String select = "select * from stucomcrossing.inventory where user='" + usu + "' and item='" + usu + "'";
+        Statement st = connection.createStatement();
+        ResultSet rs = st.executeQuery(select);
+        Inventory i = new Inventory();
+        if (rs.next()) {
+            i.setItem(getItemByName("item"));
+            i.setUser(getUserByUsername("user"));
+            i.setQuantity(rs.getInt("quantity"));
+        }
+        String update = "update stucomcrossing.inventory set quantity=? where user=? and item=?";
+        PreparedStatement ps = connection.prepareStatement(update);
+        ps.setInt(1, (i.getQuantity() - 1));
+        ps.setString(2, usu);
+        ps.setString(3, itm);
+        ps.executeUpdate();
+        rs.close();
+        st.close();
+        ps.close();
+        return bnd;
+    }
+
+    //This part modify Item's price: (Only price, not SalePrice)
     public void modifyItemPriceValue(String itm, double value) throws SQLException {
         Item aux = new Item(itm);
         if (itemExists(aux) == true) {
@@ -144,18 +224,63 @@ public class StuCrossDAO {
         st.close();
         return bnd;
     }
-    //Get Char by User Location:
-
-    public List<Character> CharactergetCharByUserLocation(String usu) throws SQLException, MyException{
-        List<Character> Characters = new ArrayList<>();
+    //Get the Friendship list from a username
+    public List<Contact> getFriendShipsFromUser(String usu) throws SQLException, MyException{
+        List<Contact> Contacts = new ArrayList<>();
         User aux = getUserByUsername(usu);
-        if(!userExists(aux)) {
+        if (!userExists(aux)) {
             throw new MyException("| [!]  Error: User Not Found on DB   [!] |");
         }
-        String select = "select * from stucomcrossing.character where place='" + aux.getPlace()+ "'";
+        String select = "select * from stucomcrossing.contact where user='" + usu + "'";
         Statement st = connection.createStatement();
         ResultSet rs = st.executeQuery(select);
-        while (rs.next()){
+        while (rs.next()) {
+            Contact conList = new Contact();
+            conList.setUser(getUserByUsername(rs.getString("user")));
+            conList.setCharacter(getCharacterByName("character"));
+            //conList.setDate(rs.getDate("date"));
+            conList.setLevel(rs.getInt("level"));
+            conList.setPoints(rs.getInt("points"));
+            Contacts.add(conList);
+        }
+        rs.close();
+        st.close();        
+        return Contacts;
+    }
+
+    //Get Inventory by User Owner:
+    public List<Inventory> getInventoryByUser(String usu) throws SQLException, MyException {
+        List<Inventory> Invent = new ArrayList<>();
+        User aux = getUserByUsername(usu);
+        if (!userExists(aux)) {
+            throw new MyException("| [!]  Error: User Not Found on DB   [!] |");
+        }
+        String select = "select * from stucomcrossing.inventory where user='" + usu + "'";
+        Statement st = connection.createStatement();
+        ResultSet rs = st.executeQuery(select);
+        while (rs.next()) {
+            Inventory InvList = new Inventory();
+            InvList.setUser(getUserByUsername(rs.getString("user")));
+            InvList.setItem(getItemByName(rs.getString("item")));
+            InvList.setQuantity(rs.getInt("quantity"));
+            Invent.add(InvList);
+        }
+        rs.close();
+        st.close();
+        return Invent;
+    }
+
+    //Get Char by User Location:
+    public List<Character> getCharByUserLocation(String usu) throws SQLException, MyException {
+        List<Character> Characters = new ArrayList<>();
+        User aux = getUserByUsername(usu);
+        if (!userExists(aux)) {
+            throw new MyException("| [!]  Error: User Not Found on DB   [!] |");
+        }
+        String select = "select * from stucomcrossing.character where place='" + aux.getPlace() + "'";
+        Statement st = connection.createStatement();
+        ResultSet rs = st.executeQuery(select);
+        while (rs.next()) {
             Character charList = new Character();
             charList.setName(rs.getString("name"));
             charList.setStudy(rs.getString("study"));
@@ -167,8 +292,9 @@ public class StuCrossDAO {
         st.close();
         return Characters;
     }
+
     //Get Item Price:
-    public Item getItemPrice(String itm) throws SQLException, MyException{
+    public Item getItemByName(String itm) throws SQLException, MyException {
         Item aux = new Item(itm);
         if (!itemExists(aux)) {
             throw new MyException("| [!]  Error: Item Not Found on DB   [!] |");
@@ -176,14 +302,15 @@ public class StuCrossDAO {
         Statement st = connection.createStatement();
         ResultSet rs = st.executeQuery("select * from stucomcrossing.item where name='" + itm + "'");
         Item i = new Item();
-            if(rs.next()){
-                i.setName(rs.getString("name"));
-                i.setPrice(rs.getDouble("price"));
-                i.setSalePrice(rs.getDouble("saleprice"));
-            }
+        if (rs.next()) {
+            i.setName(rs.getString("name"));
+            i.setPrice(rs.getDouble("price"));
+            i.setSalePrice(rs.getDouble("saleprice"));
+        }
         return i;
-                
+
     }
+
     //Get Char:
     public Character getCharacterByName(String name) throws SQLException, MyException {
         Character aux = new Character(name);

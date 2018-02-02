@@ -6,38 +6,40 @@ import java.sql.SQLException;
 import java.util.List;
 import model.User;
 import model.Character;
+import model.Contact;
+import model.Inventory;
 import model.Item;
 
 /**
  * @author balsamiq
  */
 public class M03P05StucomCrossing {
-    
+
     public static void main(String[] args) throws MyException, InterruptedException {
         StuCrossDAO stuCrossDAO = new StuCrossDAO();
         title();
-        
+
         //Something to declare? do it here:
         //Users:
-        User u1 = new User("ViejoVerde","88SS",0,0,"Perdido",0);
-        User u2 = new User("Carles","pass",0,0,"Clase",0);
-        User u3 = new User("Albert","pass",0,0,"Clase",0);
-        User u4 = new User("Torquemada","pass",0,0,"Biblioteca",0);
-        User u5 = new User("JoanaDeArco","pass",0,0,"Biblioteca",0);
+        User u1 = new User("ViejoVerde", "88SS", 100, 0, "Perdido", 0);
+        User u2 = new User("Carles", "pass", 100, 0, "Clase", 0);
+        User u3 = new User("Albert", "pass", 100, 0, "Clase", 0);
+        User u4 = new User("Torquemada", "pass", 100, 0, "Biblioteca", 0);
+        User u5 = new User("JoanaDeArco", "pass", 100, 0, "Biblioteca", 0);
         //Characters:
-        Character c1 = new Character("Fury","Things","Everywhere","Dont know");
+        Character c1 = new Character("Fury", "Things", "Everywhere", "Dont know");
         Character c2 = new Character("Robertus", "DAW", "P2", "Palo");
         Character c3 = new Character("Brutus", "DAW", "P2", "Piedra");
         Character c4 = new Character("Chirigotus", "DAM", "P2", "AceleradorParticulas");
         Character c5 = new Character("Bilis", "DAM", "P2", "Piedra");
         //Items:
-        Item i1 = new Item("Palo",59.0,20.0,"Objeto Contundente","Modernista");
-        Item i2 = new Item("Piedra",20.0,10.5,"Objeto Contundente","Modernista");
-        Item i3 = new Item("AceleradorParticulas",999.0,500.0,"Objeto de bolsillo","Lo peta");
-        Item i4 = new Item("Libro",30.0,25.0,"Objeto Contundente","Libro Rojo de Mao");
-        Item i5 = new Item("Teclado",30.0,15.0,"Objeto Contundente","Tecnologico");
-        
-        try{
+        Item i1 = new Item("Palo", 59.0, 20.0, "Objeto Contundente", "Modernista");
+        Item i2 = new Item("Piedra", 20.0, 10.5, "Objeto Contundente", "Modernista");
+        Item i3 = new Item("AceleradorParticulas", 999.0, 500.0, "Objeto de bolsillo", "Lo peta");
+        Item i4 = new Item("Libro", 30.0, 25.0, "Objeto Contundente", "Libro Rojo de Mao");
+        Item i5 = new Item("Teclado", 30.0, 15.0, "Objeto Contundente", "Tecnologico");
+
+        try {
             stuCrossDAO.connect();
             //------------------------------------------------------------------
             //Insert new User 
@@ -45,7 +47,7 @@ public class M03P05StucomCrossing {
             waitForIt();
             System.out.println(" ________________________________________ ");
             System.out.println("|  Registering user :                    |");
-            System.out.println("|  --> " + u1.getUsername()+ "." );
+            System.out.println("|  --> " + u1.getUsername() + ".");
             newUser(stuCrossDAO, u1);
             System.out.println("|  Inserting other users...              |");
             newUser(stuCrossDAO, u2);
@@ -66,7 +68,7 @@ public class M03P05StucomCrossing {
             waitForIt();
             System.out.println(" ________________________________________ ");
             System.out.println("|  Registering character :               |");
-            System.out.println("|  --> " + c1.getName()+ "." );
+            System.out.println("|  --> " + c1.getName() + ".");
             newCharacter(stuCrossDAO, c1);
             System.out.println("|  Inserting other characters...         |");
             newCharacter(stuCrossDAO, c2);
@@ -79,7 +81,7 @@ public class M03P05StucomCrossing {
             waitForIt();
             System.out.println(" ________________________________________ ");
             System.out.println("|  Registering item :                    |");
-            System.out.println("|  --> " + i1.getName()+ "." );
+            System.out.println("|  --> " + i1.getName() + ".");
             newItem(stuCrossDAO, i1);
             System.out.println("|  Inserting other Items...              |");
             newItem(stuCrossDAO, i2);
@@ -93,10 +95,10 @@ public class M03P05StucomCrossing {
             System.out.println(" ________________________________________ ");
             System.out.println("|  User Login :                          |");
             System.out.println("|  User:                                 |");
-            String usu="ViejoRojo";
+            String usu = "ViejoRojo";
             System.out.println("|  --> " + usu + "                         |");
             System.out.println("|  Password:                             |");
-            String pass="88SS";
+            String pass = "88SS";
             System.out.println("|  --> " + pass + "                              |");
             System.out.println("|                                        |");
             System.out.println("|  Login in...                           |");
@@ -108,10 +110,10 @@ public class M03P05StucomCrossing {
             System.out.println(" ________________________________________ ");
             System.out.println("|  User Login :                          |");
             System.out.println("|  User:                                 |");
-            usu="ViejoVerde";
+            usu = "ViejoVerde";
             System.out.println("|  --> " + usu + "                        |");
             System.out.println("|  Password:                             |");
-            pass="88SS";
+            pass = "88SS";
             System.out.println("|  --> " + pass + "                              |");
             System.out.println("|                                        |");
             System.out.println("|  Login in...                           |");
@@ -143,11 +145,11 @@ public class M03P05StucomCrossing {
             bnd = true;
             usu = "ViejoFlojo";
             System.out.println("|  User to move:                         |");
-            System.out.println("|  --> "+usu);
+            System.out.println("|  --> " + usu);
             String newLocation = "Biblioteca";
             System.out.println("|  New Location:                         |");
-            System.out.println("|  --> "+newLocation);
-            modifyLocation(stuCrossDAO,bnd,usu,newLocation);
+            System.out.println("|  --> " + newLocation);
+            modifyLocation(stuCrossDAO, bnd, usu, newLocation);
             System.out.println("|________________________________________|");
             waitForIt();
             System.out.println(" ________________________________________");
@@ -166,11 +168,11 @@ public class M03P05StucomCrossing {
             bnd = false;
             usu = "Fury";
             System.out.println("|  User to move:                         |");
-            System.out.println("|  --> "+usu);
+            System.out.println("|  --> " + usu);
             newLocation = "Clase";
             System.out.println("|  New Location:                         |");
-            System.out.println("|  --> "+newLocation);
-            modifyLocation(stuCrossDAO,bnd,usu,newLocation);
+            System.out.println("|  --> " + newLocation);
+            modifyLocation(stuCrossDAO, bnd, usu, newLocation);
             System.out.println("|________________________________________|");
             waitForIt();
             System.out.println(" ________________________________________");
@@ -185,11 +187,11 @@ public class M03P05StucomCrossing {
             System.out.println("|  Modify Item's Price :                 |");
             String itm = "Palo";
             System.out.println("|  Item to change:                       |");
-            System.out.println("|  --> "+itm);
+            System.out.println("|  --> " + itm);
             double newValue = 66.6;
             System.out.println("|  New Price:                            |");
-            System.out.println("|  --> "+newValue);
-            modifyItemPrice(stuCrossDAO,itm,newValue);
+            System.out.println("|  --> " + newValue);
+            modifyItemPrice(stuCrossDAO, itm, newValue);
             System.out.println("|________________________________________|");
             //------------------------------------------------------------------
             //Verify Location (who is there)
@@ -199,34 +201,58 @@ public class M03P05StucomCrossing {
             System.out.println("|  Users on the same Place :             |");
             usu = "ViejoFlojo";
             System.out.println("|  UserLoc to search:                    |");
-            System.out.println("|  --> "+usu);
-            searchCharByUser(stuCrossDAO,usu);
+            System.out.println("|  --> " + usu);
+            searchCharByUser(stuCrossDAO, usu);
             System.out.println("|________________________________________|");
             //------------------------------------------------------------------
             //Buy item from User
             waitForIt();
             System.out.println(" ________________________________________ ");
             System.out.println("|  Buy Item to User :                    |");
-            usu = "ViejoFlojo";
+            usu = "Carles";
             System.out.println("|  User:                                 |");
-            System.out.println("|  --> "+usu);
-            itm = "Palo";
+            System.out.println("|  --> " + usu);
+            itm = "Piedra";
             System.out.println("|  Item:                                 |");
-            System.out.println("|  --> "+itm);
-            sellItemFromUser(stuCrossDAO,usu,itm);
+            System.out.println("|  --> " + itm);
+            sellItemFromUser(stuCrossDAO, usu, itm);
             System.out.println("|________________________________________|");
             //------------------------------------------------------------------
             //Sell item to User
-            
+            waitForIt();
+            System.out.println(" ________________________________________ ");
+            System.out.println("|  Sell Item to User :                   |");
+            usu = "Albert";
+            System.out.println("|  User:                                 |");
+            System.out.println("|  --> " + usu);
+            itm = "Palo";
+            System.out.println("|  Item:                                 |");
+            System.out.println("|  --> " + itm);
+            sellItemFromUser(stuCrossDAO, usu, itm);
+            System.out.println("|________________________________________|");
             //------------------------------------------------------------------
             //Give Item from User to Character
             
             //------------------------------------------------------------------
             //Check User's Iventory
-            
             //------------------------------------------------------------------
             //Check User's Friendships
-            
+            waitForIt();
+            System.out.println(" ________________________________________ ");
+            System.out.println("|  Check Friendships :                   |");
+            System.out.println("|                                        |");
+            System.out.println("|  Noone has friends here, it's just     |");
+            System.out.println("| an ilusion to make this society a litte|");
+            System.out.println("| more kind, but in reallity everyone    |");
+            System.out.println("| want to live alone in the dark of their|");
+            System.out.println("| cold homes...                          |");
+            System.out.println("|                                        |");
+            waitForIt();waitForIt();waitForIt();waitForIt();
+            System.out.println("| Na, I'm Kidding, here they are:        |");
+            System.out.println("|  Showing friends from :                |");
+            System.out.println("|  --> "+ usu);
+            getFriendShips(stuCrossDAO,usu);
+            System.out.println("|________________________________________|");
             //------------------------------------------------------------------
             //Check User's Inventory
             waitForIt();
@@ -234,123 +260,148 @@ public class M03P05StucomCrossing {
             System.out.println("|  Inventory Owner :                     |");
             usu = "Carles";
             System.out.println("|  User:                                 |");
-            System.out.println("|  --> "+usu);
-            itm = "Palo";
-            System.out.println("|  Item:                                 |");
-            System.out.println("|  --> "+itm);
-            sellItemFromUser(stuCrossDAO,usu,itm);
+            System.out.println("|  --> " + usu);
+            System.out.println("|  Inventory:                            |");
+            searchInventoryFromUser(stuCrossDAO, usu);
             System.out.println("|________________________________________|");
-        }
-        catch(SQLException ex){
+        } catch (SQLException ex) {
             System.out.println("| Error while connecting/disconnecting:  |");
-            System.out.println("| "+ex.getMessage());
+            System.out.println("| " + ex.getMessage());
         }
         exit();
     }
     //Backgroud Resources
     //--------------------------------------------------------------------------
-    public static void sellItemFromUser(StuCrossDAO stuCrossDAO, String usu,String itm) throws SQLException, MyException{
-//        stuCrossDAO.sellItemFromUsers(usu,itm);
-        try{
-        Item i = stuCrossDAO.getItemPrice(itm);
-        }
-        catch(MyException ex){
+    public static void getFriendShips(StuCrossDAO stuCrossDAO,String usu) throws SQLException, MyException{
+        try {
+            List<Contact> conList = stuCrossDAO.getFriendShipsFromUser(usu);
+            for (Contact c : conList) {
+                System.out.println(c);
+            }
+        } catch (MyException ex) {
             System.out.println(ex.getMessage());
-            
         }
     }
-    public static void modifyItemPrice(StuCrossDAO stuCrossDAO,String itm, double value) throws SQLException{
-        stuCrossDAO.modifyItemPriceValue(itm,value);
+    public static void buyItemFromUser(StuCrossDAO stuCrossDAO, String usu, String itm) throws SQLException, MyException{
+        stuCrossDAO.giveItemToUsers(usu, itm);
+        try {
+            Item i = stuCrossDAO.getItemByName(itm);
+            stuCrossDAO.payAndGetPaid(false, usu, i.getPrice());
+        } catch (MyException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
-    public static void modifyLocation(StuCrossDAO stuCrossDAO,boolean bnd, String usu, String newLocation) throws SQLException, MyException{
-        if(bnd){
-            stuCrossDAO.modifyLocationUser(usu,newLocation);
+    public static void sellItemFromUser(StuCrossDAO stuCrossDAO, String usu, String itm) throws SQLException, MyException {
+        //This part will take 1 from Inventory:
+        stuCrossDAO.takeItemFromUsers(usu, itm);
+        try {
+            Item i = stuCrossDAO.getItemByName(itm);
+            stuCrossDAO.payAndGetPaid(true, usu, i.getSalePrice());
+        } catch (MyException ex) {
+            System.out.println(ex.getMessage());
         }
-        else if(!bnd){
-            stuCrossDAO.modifyLicationCharacter(usu,newLocation);
-        }
-        else{
+    }
+    public static void modifyItemPrice(StuCrossDAO stuCrossDAO, String itm, double value) throws SQLException {
+        stuCrossDAO.modifyItemPriceValue(itm, value);
+    }
+    public static void modifyLocation(StuCrossDAO stuCrossDAO, boolean bnd, String usu, String newLocation) throws SQLException, MyException {
+        if (bnd) {
+            stuCrossDAO.modifyLocationUser(usu, newLocation);
+        } else if (!bnd) {
+            stuCrossDAO.modifyLicationCharacter(usu, newLocation);
+        } else {
             System.out.println("|  How the hell have you arrived here?   |");
         }
     }
-    public static void modifyProfile(StuCrossDAO stuCrossDAO, User user, String usu) throws SQLException{
+
+    public static void modifyProfile(StuCrossDAO stuCrossDAO, User user, String usu) throws SQLException {
         try {
             stuCrossDAO.modifyUserProfile(user, usu);
-        }
-        catch(MyException ex){
+        } catch (MyException ex) {
             System.out.println(ex.getMessage());
         }
     }
-    public static void loginFunction(StuCrossDAO stuCrossDAO, String usu, String pass) throws SQLException, MyException{
-            boolean checkLogin = stuCrossDAO.Login(usu, pass);
-            if(checkLogin){
-                System.out.println("|    [!]     Login Successfull!    [!]   |");
-            }
-            else{
-                System.out.println("|  [!] Error: Wrong User or Password [!] |");
-            }
+
+    public static void loginFunction(StuCrossDAO stuCrossDAO, String usu, String pass) throws SQLException, MyException {
+        boolean checkLogin = stuCrossDAO.Login(usu, pass);
+        if (checkLogin) {
+            System.out.println("|    [!]     Login Successfull!    [!]   |");
+        } else {
+            System.out.println("|  [!] Error: Wrong User or Password [!] |");
+        }
     }
-    public static void searchCharByUser(StuCrossDAO stuCrossDAO, String usu) throws SQLException{
-        try{
-        List<Character> charList =stuCrossDAO.CharactergetCharByUserLocation(usu);
+
+    public static void searchInventoryFromUser(StuCrossDAO stuCrossDAO, String usu) throws SQLException, MyException {
+        List<Inventory> invList = stuCrossDAO.getInventoryByUser(usu);
         System.out.println("|  Location to search:                   |");
         System.out.println("|  Characters found there:               |");
-            for(Character c : charList){
+        for (Inventory c : invList) {
+            System.out.println(c.getQuantity());
+            System.out.println(c.getItem());
+        }
+    }
+
+    public static void searchCharByUser(StuCrossDAO stuCrossDAO, String usu) throws SQLException {
+        try {
+            List<Character> charList = stuCrossDAO.getCharByUserLocation(usu);
+            System.out.println("|  Location to search:                   |");
+            System.out.println("|  Characters found there:               |");
+            for (Character c : charList) {
                 System.out.println(c);
             }
-        }
-        catch(MyException ex){
+        } catch (MyException ex) {
             System.out.println(ex.getMessage());
         }
     }
-    public static void searchName(StuCrossDAO stuCrossDAO, String name) throws SQLException{
-        try{
+
+    public static void searchName(StuCrossDAO stuCrossDAO, String name) throws SQLException {
+        try {
             User aux = stuCrossDAO.getUserByUsername(name);
             System.out.println("|  User Details:                         |");
             System.out.println("|  " + aux);
-        }
-        catch(MyException ex){
+        } catch (MyException ex) {
             System.out.println(ex.getMessage());
         }
     }
-    public static void searchNameC(StuCrossDAO stuCrossDAO, String name) throws SQLException{
-        try{
+
+    public static void searchNameC(StuCrossDAO stuCrossDAO, String name) throws SQLException {
+        try {
             Character aux = stuCrossDAO.getCharacterByName(name);
             System.out.println("|  Character Details:                    |");
             System.out.println("|  " + aux);
-        }
-        catch(MyException ex){
+        } catch (MyException ex) {
             System.out.println(ex.getMessage());
         }
     }
-    private static void newItem(StuCrossDAO stuCrossDAO, Item i1) throws SQLException{
-        try{
+
+    private static void newItem(StuCrossDAO stuCrossDAO, Item i1) throws SQLException {
+        try {
             stuCrossDAO.insertItem(i1);
             System.out.println("|  Item successfully added.              |");
-        }
-        catch(MyException ex){
-            System.out.println("| "+ex.getMessage());
+        } catch (MyException ex) {
+            System.out.println("| " + ex.getMessage());
         }
     }
-    private static void newCharacter(StuCrossDAO stuCrossDAO, Character c1) throws SQLException{
-        try{
+
+    private static void newCharacter(StuCrossDAO stuCrossDAO, Character c1) throws SQLException {
+        try {
             stuCrossDAO.insertCharacter(c1);
             System.out.println("|  Character successfully added.         |");
-        }
-        catch(MyException ex){
-            System.out.println("| "+ex.getMessage());
+        } catch (MyException ex) {
+            System.out.println("| " + ex.getMessage());
         }
     }
-    private static void newUser(StuCrossDAO stuCrossDAO, User u1) throws SQLException{
-        try{
+
+    private static void newUser(StuCrossDAO stuCrossDAO, User u1) throws SQLException {
+        try {
             stuCrossDAO.insertUser(u1);
             System.out.println("|  User successfully added.              |");
-        }
-        catch (MyException ex){
-            System.out.println("| "+ex.getMessage());
+        } catch (MyException ex) {
+            System.out.println("| " + ex.getMessage());
         }
     }
-    private static void waitForIt() throws InterruptedException{
+
+    private static void waitForIt() throws InterruptedException {
         int seconds = 1;
         int miliseconds = seconds * 1000;
         Thread.sleep(miliseconds);
@@ -361,7 +412,6 @@ public class M03P05StucomCrossing {
 
     //Graphic Resources
     //--------------------------------------------------------------------------
-
     private static void title() {
         System.out.println(" ________________________________________ ");
         System.out.println("|                                        |");
